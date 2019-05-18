@@ -9,11 +9,15 @@ namespace MemoDB
 {
     class MemoConnection
     {
-        MySqlConnection con;
+        private MySqlConnection con;
+
+        public MemoConnection()
+        {
+            con = new MySqlConnection("userid=java;password=pass;database=memo;Host=localhost");
+        }
 
         public MySqlConnection getConnection()
         {
-            con = new MySqlConnection("userid=java;password=pass;database=memo;Host=localhost");
             return con;
         }
 
@@ -21,7 +25,7 @@ namespace MemoDB
         {
             con.Open();
         }
-        public void close()
+        public void Close()
         {
             con.Close();
         }

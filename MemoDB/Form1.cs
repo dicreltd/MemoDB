@@ -13,7 +13,7 @@ namespace MemoDB
 {
     public partial class Form1 : Form
     {
-        MySqlDataAdapter adp;
+        MemoConnection mCon = new MemoConnection();
         DataTable table = new DataTable();
 
         public Form1()
@@ -23,9 +23,10 @@ namespace MemoDB
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            MemoConnection cn = new MemoConnection();
-            adp = new MySqlDataAdapter("SELECT mid,title,utime FROM memo", cn.getConnection());
-            adp.Fill(table);
+            mCon.Open();
+            updateDataGrid(mCon);
+            mCon.Close();
+
             dataGridView1.DataSource = table;
 
             dataGridView1.Columns[0].Visible = false;
@@ -34,8 +35,9 @@ namespace MemoDB
             dataGridView1.Columns[2].Width = 280;
 
         }
-        private void updateDataGrid()
+        private void updateDataGrid(MemoConnection con)
         {
+            MySqlDataAdapter adp = new MySqlDataAdapter("SELECT mid,title,utime FROM memo", con.getConnection());
             table.Clear();
             adp.Fill(table);
         }
@@ -46,14 +48,12 @@ namespace MemoDB
 
             if (formEdit.ShowDialog() == DialogResult.OK)
             {
-                MemoConnection con = new MemoConnection();
-                MemoDAO dao = new MemoDAO(con.getConnection());
+                MemoDAO dao = new MemoDAO(mCon.getConnection());
 
-                con.Open();
+                mCon.Open();
                 dao.insert(formEdit.memo);
-                con.close();
-
-                updateDataGrid();
+                updateDataGrid(mCon);
+                mCon.Close();
             }
         }
 
@@ -63,10 +63,9 @@ namespace MemoDB
             DataRow row = rowView.Row;
             int mid = (int)row["mid"];
 
-            MemoConnection con = new MemoConnection();
-            MemoDAO dao = new MemoDAO(con.getConnection());
+            MemoDAO dao = new MemoDAO(mCon.getConnection());
 
-            con.Open();
+            mCon.Open();
             Memo memo = dao.findById(mid);
 
             FormEdit formEdit = new FormEdit();
@@ -75,9 +74,9 @@ namespace MemoDB
             if (formEdit.ShowDialog() == DialogResult.OK)
             {
                 dao.update(memo);
-                updateDataGrid();
+                updateDataGrid(mCon);
             }
-            con.close();
+            mCon.Close();
 
 
 
@@ -92,14 +91,13 @@ namespace MemoDB
             if (DialogResult.Yes == MessageBox.Show("本当に削除してもいいですか？",
         "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
-                MemoConnection con = new MemoConnection();
-                MemoDAO dao = new MemoDAO(con.getConnection());
+                MemoDAO dao = new MemoDAO(mCon.getConnection());
 
-                con.Open();
+                mCon.Open();
                 dao.delete(mid);
-                con.close();
+                updateDataGrid(mCon);
+                mCon.Close();
 
-                updateDataGrid();
 
             }
         }
