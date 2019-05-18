@@ -66,9 +66,8 @@ namespace MemoDB
 
         private void currentEdit()
         {
-            DataRowView rowView = (DataRowView)dataGridView1.CurrentRow.DataBoundItem;
-            DataRow row = rowView.Row;
-            int mid = (int)row["mid"];
+            int row = dataGridView1.CurrentCell.RowIndex;
+            int mid = (int)dataGridView1[0, row].Value;
 
             MemoDAO dao = new MemoDAO(mCon.getConnection());
 
@@ -89,9 +88,8 @@ namespace MemoDB
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            DataRowView rowView = (DataRowView)dataGridView1.CurrentRow.DataBoundItem;
-            DataRow row = rowView.Row;
-            int mid = (int)row["mid"];
+            int row = dataGridView1.CurrentCell.RowIndex;
+            int mid = (int)dataGridView1[0, row].Value;
 
             if (DialogResult.Yes == MessageBox.Show("本当に削除してもいいですか？",
         "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
@@ -115,12 +113,10 @@ namespace MemoDB
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow != null)
+            if (dataGridView1.CurrentCell != null)
             {
-                DataRowView rowView = (DataRowView)dataGridView1.CurrentRow.DataBoundItem;
-                DataRow row = rowView.Row;
-                string body = (string)row["body"];
-
+                int row = dataGridView1.CurrentCell.RowIndex;
+                string body = (string)dataGridView1[2, row].Value;
                 textBoxBody.Text = body;
             }
         }
