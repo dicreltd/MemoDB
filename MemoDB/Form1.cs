@@ -31,13 +31,14 @@ namespace MemoDB
 
             dataGridView1.Columns[0].Visible = false;
             dataGridView1.Columns[1].HeaderText = "タイトル";
-            dataGridView1.Columns[2].HeaderText = "更新日時";
-            dataGridView1.Columns[2].Width = 280;
+            dataGridView1.Columns[2].Visible = false;
+            dataGridView1.Columns[3].HeaderText = "更新日時";
+            dataGridView1.Columns[3].Width = 280;
 
         }
         private void updateDataGrid(MemoConnection con)
         {
-            MySqlDataAdapter adp = new MySqlDataAdapter("SELECT mid,title,utime FROM memo", con.getConnection());
+            MySqlDataAdapter adp = new MySqlDataAdapter("SELECT mid,title,body,utime FROM memo", con.getConnection());
             table.Clear();
             adp.Fill(table);
             table.DefaultView.Sort = "utime DESC";
@@ -110,6 +111,18 @@ namespace MemoDB
         {
             currentEdit();
 
+        }
+
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow != null)
+            {
+                DataRowView rowView = (DataRowView)dataGridView1.CurrentRow.DataBoundItem;
+                DataRow row = rowView.Row;
+                string body = (string)row["body"];
+
+                textBoxBody.Text = body;
+            }
         }
     }
 }
