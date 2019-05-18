@@ -40,6 +40,7 @@ namespace MemoDB
             MySqlDataAdapter adp = new MySqlDataAdapter("SELECT mid,title,utime FROM memo", con.getConnection());
             table.Clear();
             adp.Fill(table);
+            table.DefaultView.Sort = "utime DESC";
         }
 
         private void ButtonAdd_Click(object sender, EventArgs e)
@@ -59,6 +60,11 @@ namespace MemoDB
 
         private void ButtonEdit_Click(object sender, EventArgs e)
         {
+            currentEdit();
+        }
+
+        private void currentEdit()
+        {
             DataRowView rowView = (DataRowView)dataGridView1.CurrentRow.DataBoundItem;
             DataRow row = rowView.Row;
             int mid = (int)row["mid"];
@@ -77,8 +83,6 @@ namespace MemoDB
                 updateDataGrid(mCon);
             }
             mCon.Close();
-
-
 
         }
 
@@ -100,6 +104,12 @@ namespace MemoDB
 
 
             }
+        }
+
+        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            currentEdit();
+
         }
     }
 }
